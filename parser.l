@@ -19,7 +19,7 @@ IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
 CP  (u|U|L)
 SP  (u8|u|U|L)
 ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-WS  [ \t\v\n\f]
+WS  [ \t\v\f]
 
 %{
 #include <stdio.h>
@@ -30,7 +30,7 @@ WS  [ \t\v\n\f]
 
 
 extern int sym_type(const char *);  /* returns type from symbol table */
-
+extern int yylineno;
 
 #define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
 
@@ -40,6 +40,7 @@ int yyparse(void);
 %}
 
 %%
+\n { yylineno++; }
 "/*"                                    { comment(); }
 "//".*                                    { /* consume //-comment */ }
 
@@ -161,7 +162,7 @@ int yyparse(void);
 
 int yywrap(void)        /* called at end of input */
 {
-    return 1;           /* terminate now */
+               /* terminate now */
 }
 
 static void comment(void)

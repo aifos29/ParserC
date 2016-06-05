@@ -15,6 +15,7 @@
 
 %token	ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
 
+
 %start translation_unit
 
 
@@ -27,6 +28,7 @@ primary_expression
 	| '(' expression ')'
 	| generic_selection
 	;
+
 
 constant
 	: I_CONSTANT		/* includes character_constant */
@@ -484,7 +486,7 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' statement ELSE statement
+	: IF '(' expression ')' statement ELSE statement 
 	| IF '(' expression ')' statement
 	| SWITCH '(' expression ')' statement
 	;
@@ -529,8 +531,12 @@ declaration_list
 %%
 #include <stdio.h>
 
+ extern int yylineno;  
+
 void yyerror(const char *s)
 {
 	fflush(stdout);
-	fprintf(stderr, "*** %s\n", s);
+	printf("*** %s\n", s);
+	printf("%d",yylineno-1);
+	
 }
