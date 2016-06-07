@@ -68,21 +68,21 @@ generic_selection
 	|GENERIC '(' assignment_expression ')'						
 	|GENERIC '(' assignment_expression  generic_assoc_list ')'	
 	|GENERIC '('generic_assoc_list ')'	
-	|GENERIC error {yyerror("Algo no anda bien en generic_selection");yyerror;}						
+	|GENERIC error {lyyerror(@1,"Expresión incomplenta, falta parentesis");yyerror;}						
 
 	;
 
 generic_assoc_list
 	: generic_association 
 	| generic_assoc_list ',' generic_association 
-	| generic_assoc_list error {yyerror("Algo no anda bien en generic_assoc_list");yyerror;}
+	| generic_assoc_list error {lyyerror(@1,"Falta una coma");yyerror;}
 	
 	;
 
 generic_association
 	: type_name ':' assignment_expression 
 	| DEFAULT ':' assignment_expression 
-	|error  {yyerror("Algo no anda bien en generic_association");yyerror;}
+	|error  {lyyerror(@1,"Falta dos puntos en la declaración");yyerror;}
 	;
 
 postfix_expression
@@ -96,7 +96,7 @@ postfix_expression
 	| postfix_expression DEC_OP 
 	| '(' type_name ')' '{' initializer_list '}' 
 	| '(' type_name ')' '{' initializer_list ',' '}' 
-	| error {lyyerror(@1,"Algo no anda bien en postfix_expression");}
+	| error {lyyerror(@1,"Falta parentesis o llaves");}
 	;
 
 argument_expression_list
@@ -240,7 +240,7 @@ declaration
 	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';'
 	| static_assert_declaration
-	|error {yyerror("Algo no anda bien en declaration ");}
+	|error {lyyerror(@1,"Falta ; al finalizar expresión");}
 	;
 
 declaration_specifiers
@@ -254,18 +254,18 @@ declaration_specifiers
 	| function_specifier
 	| alignment_specifier declaration_specifiers
 	| alignment_specifier
-	|error {yyerror("Algo no anda bien en declaration_specifiers");yyerror;}
+	|error {lyyerror(@1,"La declaración no ha sido correcta");yyerror;}
 	;
 
 init_declarator_list
 	: init_declarator
 	| init_declarator_list ',' init_declarator
-	|error {yyerror("Algo no anda bien en init_declarator_list");yyerror;}
+	|error {lyyerror(@1,"Falta , al separar los argumentos");yyerror;}
 	;
 
 init_declarator
 	: declarator '=' initializer   	| declarator 
-	|error {yyerror("Algo no anda bien en init_declarator ");yyerror;}
+	|error {lyyerror(@1,"No se ha declarado correctamente");yyerror;}
 	;
 
 
@@ -303,7 +303,7 @@ struct_or_union_specifier
 	: struct_or_union '{' struct_declaration_list '}'
 	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'
 	| struct_or_union IDENTIFIER
-	|error {yyerror("Algo no anda bien en struct_or_union_specifier ");yyerror;}
+	|error {lyyerror(@1," Las llaves no han sido cerradas correctamente ");yyerror;}
 	;
 
 struct_or_union
@@ -314,14 +314,14 @@ struct_or_union
 struct_declaration_list
 	: struct_declaration
 	| struct_declaration_list struct_declaration
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Declaración incorrecta de lista ");yyerror;}
 	;
 
 struct_declaration
 	: specifier_qualifier_list ';'	/* for anonymous struct/union */
 	| specifier_qualifier_list struct_declarator_list ';'
 	| static_assert_declaration
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Falta ; al finalizar la declaración ");yyerror;}
 	;
 
 specifier_qualifier_list
@@ -335,14 +335,14 @@ specifier_qualifier_list
 struct_declarator_list
 	: struct_declarator
 	| struct_declarator_list ',' struct_declarator
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Falta ; al finalizar la declaración ");yyerror;}
 	;
 
 struct_declarator
 	: ':' constant_expression
 	| declarator ':' constant_expression
 	| declarator
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Estructura declarada de forma incorrecta ");yyerror;}
 	;
 
 enum_specifier
@@ -357,13 +357,13 @@ enum_specifier
 enumerator_list
 	: enumerator
 	| enumerator_list ',' enumerator
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Falta coma al separar los argumentos ");yyerror;}
 	;
 
 enumerator	/* identifiers must be flagged as ENUMERATION_CONSTANT */
 	: enumeration_constant '=' constant_expression
 	| enumeration_constant
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1," Declaración incorrecta ");yyerror;}
 	;
 
 atomic_type_specifier
@@ -392,7 +392,7 @@ alignment_specifier
 declarator
 	: pointer direct_declarator
 	| direct_declarator
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Error en la declaración");yyerror;}
 	;
 
 direct_declarator
@@ -410,7 +410,7 @@ direct_declarator
 	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' ')'
 	| direct_declarator '(' identifier_list ')'
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Faltan cerrar parentesis o llaves ");yyerror;}
 	;
 
 pointer
@@ -423,7 +423,7 @@ pointer
 type_qualifier_list
 	: type_qualifier
 	| type_qualifier_list type_qualifier
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Erro en la Declaración ");yyerror;}
 	;
 
 
@@ -462,7 +462,7 @@ abstract_declarator
 	: pointer direct_abstract_declarator
 	| pointer
 	| direct_abstract_declarator
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Error en la declaracion ");yyerror;}
 	;
 
 direct_abstract_declarator
@@ -487,7 +487,7 @@ direct_abstract_declarator
 	| '(' parameter_type_list ')'
 	| direct_abstract_declarator '(' ')'
 	| direct_abstract_declarator '(' parameter_type_list ')'
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Declaración incorrecta o falta cerrar parentesis y/o llaves ");yyerror;}
 	;
 
 initializer
@@ -507,7 +507,7 @@ initializer_list
 
 designation
 	: designator_list '='
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Designacion incompleta ");yyerror;}
 	;
 
 designator_list
@@ -519,7 +519,7 @@ designator_list
 designator
 	: '[' constant_expression ']'
 	| '.' IDENTIFIER
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Designacion incorrecta");yyerror;}
 	;
 
 static_assert_declaration
@@ -534,7 +534,7 @@ statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Sentencia incorrecta");yyerror;}
 	;
 
 labeled_statement
@@ -547,7 +547,7 @@ labeled_statement
 compound_statement
 	: '{' '}'
 	| '{'  block_item_list '}'
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Las llaves no están correctamente posicionadas ");yyerror;}
 	;
 
 block_item_list
@@ -564,7 +564,7 @@ block_item
 expression_statement
 	: ';'
 	| expression ';'
-	|error {yyerror("Algo no anda bien en ");yyerror;}
+	|error {lyyerror(@1,"Falta ; al finalizar ");yyerror;}
 	;
 
 selection_statement
