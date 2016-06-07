@@ -1,3 +1,22 @@
+%{
+	#include <stdio.h>
+ 	extern int yylineno; 
+ 	extern int yyerrork;
+
+ 	#define YYLTYPE YYLTYPE
+	  typedef struct YYLTYPE
+	  {
+	    int first_line;
+	    int first_column;
+	    int last_line;
+	    int last_column;
+	    char *filename;
+	  } YYLTYPE;
+
+ 	void yyerror(const char *s);
+ 	void lyyerror(YYLTYPE t, char *s);
+%}
+%locations
 %token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
 %token	PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token	AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -12,15 +31,12 @@
 %token	STRUCT UNION ENUM ELLIPSIS
 
 %token	CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
-
 %token	ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
-
 
 %start translation_unit
 
 
 %%
-
 primary_expression
 	: IDENTIFIER 
 	| constant 
@@ -80,7 +96,7 @@ postfix_expression
 	| postfix_expression DEC_OP 
 	| '(' type_name ')' '{' initializer_list '}' 
 	| '(' type_name ')' '{' initializer_list ',' '}' 
-	| error {yyerror("Algo no anda bien en postfix_expression");yyerror;}
+	| error {lyyerror(@1,"Algo no anda bien en postfix_expression");}
 	;
 
 argument_expression_list
@@ -224,7 +240,7 @@ declaration
 	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';'
 	| static_assert_declaration
-	|error {yyerror("Algo no anda bien en declaration ");yyerror;}
+	|error {yyerror("Algo no anda bien en declaration ");}
 	;
 
 declaration_specifiers
@@ -566,6 +582,7 @@ iteration_statement
 	| FOR '(' declaration expression_statement ')' statement
 	| FOR '(' declaration expression_statement expression ')' statement
 
+
 	;
 
 jump_statement
@@ -602,16 +619,14 @@ declaration_list
 	;
 
 %%
-#include <stdio.h>
 
- extern int yylineno;  
- extern int yyerrork;
 
 void yyerror(const char *s)
 {
-	fflush(stdout);
 	printf("*** %s\n", s);
-	printf("%d",yylineno-1);
-	yyerror;
-	
+}
+
+void lyyerror(YYLTYPE t, char *s)
+{
+  printf("Line %d:c%d , %s, %s", t.first_line, t.first_column, s, yytext);
 }

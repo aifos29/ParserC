@@ -1,10 +1,41 @@
+%{
+    #include <stdio.h>
+    #include "parser.tab.c"
+    extern int sym_type(const char *);  
+    extern int yylineno;
+    #define sym_type(identifier) IDENTIFIER
+    static void comment(void);
+    static int check_type(void);
+    int yyparse(void);
+
+    #define YY_USER_ACTION update_loc();
+    static void update_loc(){
+      static int curr_line = 1;
+      static int curr_col  = 1;
+
+      yylloc.first_line   = curr_line;
+      yylloc.first_column = curr_col;
+
+      {char * s; for(s = yytext; *s != '\0'; s++){
+        if(*s == '\n'){
+          curr_line++;
+          curr_col = 1;
+        }else{
+          curr_col++;
+        }
+      }}
+
+      yylloc.last_line   = curr_line;
+      yylloc.last_column = curr_col-1;
+    }
+
+%}
 %e  1019
 %p  2807
 %n  371
 %k  284
 %a  1213
 %o  1117
-
 O   [0-7]
 D   [0-9]
 NZ  [1-9]
@@ -18,29 +49,12 @@ FS  (f|F|l|L)
 IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
 CP  (u|U|L)
 SP  (u8|u|U|L)
-ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+ES  (\\([\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
 WS  [ \t\v\f]
 
-%{
-#include <stdio.h>
-
-#include "parser.tab.c"
-
-
-
-
-extern int sym_type(const char *);  /* returns type from symbol table */
-extern int yylineno;
-
-#define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
-
-static void comment(void);
-static int check_type(void);
-int yyparse(void);
-%}
 
 %%
-\n { yylineno++; }
+\n { }
 "/*"                                    { comment(); }
 "//".*                                    { /* consume //-comment */ }
 
@@ -205,4 +219,5 @@ int  main(int  num_args , char** args) {
         yyparse();
         fclose(file);
 }
+
 
