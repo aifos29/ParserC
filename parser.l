@@ -7,6 +7,7 @@
     static void comment(void);
     static int check_type(void);
     int yyparse(void);
+    FILE * file;
 
     #define YY_USER_ACTION update_loc();
     static void update_loc(){
@@ -27,11 +28,6 @@
 
       yylloc.last_line   = curr_line;
       yylloc.last_column = curr_col-1; }
-
-      extern void EndBeamer();
-      extern void StartBeamer();
-      extern FILE * beamerFile;
-
 
 %}
 %e  1019
@@ -188,45 +184,39 @@ static void comment(void)
             if (c == 0)
                 break;
         }
-    yyerror("unterminated comment");
+    yyerror("Comentario no terminado");
 }
 
 extern void beamer_print(int x);
 extern int beamer;
-extern void startBeamer();
-extern void endBeamer();
+extern FILE * tmp;
 
 static int check_type(void)
 {
     switch (sym_type(yytext))
     {
-    case TYPEDEF_NAME:                /* previously defined */
+    case TYPEDEF_NAME:               
         return TYPEDEF_NAME;
-    case ENUMERATION_CONSTANT:        /* previously defined */
+    case ENUMERATION_CONSTANT:        
         return ENUMERATION_CONSTANT;
-    default:                          /* includes undefined */
+    default:                          
         return IDENTIFIER;
     }
 }
 
 int  main(int  num_args , char** args) {
-   
-        FILE* file = fopen(args[1],"r");
-        if (args[2] != NULL && strcmp(args[2],"-B")==0){
-            tmp = fopen("errores.txt","w+");
-
-            beamer=1;
-            startBeamer();
-        }
-    if(file == NULL) {printf("couldn 't open %s\n", args [1]);  exit (0);}
-        yyin = file;   // now  flex  reads  from  file
+    file = fopen(args[1],"r");
+    if(args[2] != NULL && strcmp(args[2],"-B")==0){
+        tmp = fopen("errores.txt","w+");
+        beamer=1;
+        startBeamer();
+        endBeamer();
+    }  
+    if(file == NULL) {printf("No se puede abrir el archivo %s\n", args [1]);  exit (0);}
+        yyin = file;   
         yyparse();
         fclose(file);
-        endBeamer();
 
-        
 }
-
-
 
 

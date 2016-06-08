@@ -636,18 +636,14 @@ void startBeamer(){
 	fprintf(beamerFile, "\\usepackage[T1]{fontenc} \n" );
 	fprintf(beamerFile, "\\usepackage[utf8]{inputenc} \n" );
 	fprintf(beamerFile, "\\let\\Tiny=\\tiny \n" );
-	fprintf(beamerFile, "\\usepackage{pgfplots}\n" );
-	fprintf(beamerFile,"\\pgfplotsset{compat=newest,compat/show suggested version=false} \n");
-	
-	fprintf(beamerFile, "\\usepackage{tikz}\n" );
 	fprintf(beamerFile, "\\usepackage{hyperref}\n" );
-	fprintf(beamerFile,"\\title{Primer Semestre - Proyecto 2 Analizador Lexico} \n");
+	fprintf(beamerFile,"\\title{Primer Semestre - Proyecto 3 Analizador Sintáctico} \n");
 	fprintf(beamerFile,"\\author { \\texttt { Amanda Solano Astorga } \\texttt { Yasiell Vallejos Gómez } } \n");
 	fprintf(beamerFile,"\\date{\\today}\n");
 	fprintf(beamerFile,"\\begin{document} \n");
 	fprintf(beamerFile,"\\maketitle \n");
 	fprintf(beamerFile,"\\begin{frame}[allowframebreaks] \n");
-	fprintf(beamerFile,"\\frametitle{ Proceso de Scanning y Herramienta Flex} \n \n");
+	fprintf(beamerFile,"\\frametitle{ Proceso de Parsing y Herramienta Bison} \n \n");
 	fprintf(beamerFile,"El proceso de parsing,es el encargado de revisar que todos los códigos cumplan con la gramatica del lenguaje.");
 	fprintf(beamerFile,"La gramatica del lenguaje, es la que dicta las reglas de como van organizados los tokens. \\newline \n");
 	fprintf(beamerFile,"\\textbf{Bison} es una herramienta que genera un parse en lenguaje C.");
@@ -669,9 +665,9 @@ void endBeamer(){
 }
 
 void writeBeamer(char *_color, char *_word){
-	
   fprintf(beamerFile, "\\textcolor{%s}{ %s } \n", _color, _word);
 }
+
 void yyerror(const char *s)
 {
 	//printf("*** %s\n", s);
@@ -680,27 +676,21 @@ void yyerror(const char *s)
 void lyyerror(YYLTYPE t, char *s)
 {
 	if (beamer==0){	
- printf("Line %d:c%d . %s %s \n ", t.first_line, t.first_column, s, yytext);
- }
- else{
- 	fprintf(tmp,"Line %d:c%d . %s %s \n ", t.first_line, t.first_column, s, yytext);
- 	beamer_print(1);
- }
-
-
+ 		printf("Line %d:c%d . %s %s \n ", t.first_line, t.first_column, s, yytext);
+ 	}
+	 else{
+	 	fprintf(beamerFile,"Line %d:c%d . %s  \n ", t.first_line, t.first_column, s);
+	 	beamer_print(1);
+	 }
 }
 
 void beamer_print(int error){
 	if (beamer==1){
-	if (error==1 ){
-
-
-		writeBeamer("red","<-");
+		if (error==1 ){
+			writeBeamer("red","\\textgreater -");
+		}
+		else{
+			writeBeamer("black",yytext);
+		}
 	}
-	else{
-		writeBeamer("black",yytext);
-	}
-}
-
-
 }
