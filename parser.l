@@ -26,8 +26,7 @@
       }}
 
       yylloc.last_line   = curr_line;
-      yylloc.last_column = curr_col-1;
-    }
+      yylloc.last_column = curr_col-1; }
 
 %}
 %e  1019
@@ -58,114 +57,103 @@ WS  [ \t\v\f]
 "/*"                                    { comment(); }
 "//".*                                    { /* consume //-comment */ }
 
-"auto"					{ return(AUTO); }
-"break"					{ return(BREAK); }
-"case"					{ return(CASE); }
-"char"					{ return(CHAR); }
-"const"					{ return(CONST); }
-"continue"				{ return(CONTINUE); }
-"default"				{ return(DEFAULT); }
-"do"					{ return(DO); }
-"double"				{ return(DOUBLE); }
-"else"					{ return(ELSE); }
-"enum"					{ return(ENUM); }
-"extern"				{ return(EXTERN); }
-"float"					{ return(FLOAT); }
-"for"					{ return(FOR); }
-"goto"					{ return(GOTO); }
-"if"					{ return(IF); }
-"inline"				{ return(INLINE); }
-"int"					{ return(INT); }
-"long"					{ return(LONG); }
-"register"				{ return(REGISTER); }
-"restrict"				{ return(RESTRICT); }
-"return"				{ return(RETURN); }
-"short"					{ return(SHORT); }
-"signed"				{ return(SIGNED); }
-"sizeof"				{ return(SIZEOF); }
-"static"				{ return(STATIC); }
-"struct"				{ return(STRUCT); }
-"switch"				{ return(SWITCH); }
-"typedef"				{ return(TYPEDEF); }
-"union"					{ return(UNION); }
-"unsigned"				{ return(UNSIGNED); }
-"void"					{ return(VOID); }
-"volatile"				{ return(VOLATILE); }
-"while"					{ return(WHILE); }
-"_Alignas"                              { return ALIGNAS; }
-"_Alignof"                              { return ALIGNOF; }
-"_Atomic"                               { return ATOMIC; }
-"_Bool"                                 { return BOOL; }
-"_Complex"                              { return COMPLEX; }
-"_Generic"                              { return GENERIC; }
-"_Imaginary"                            { return IMAGINARY; }
-"_Noreturn"                             { return NORETURN; }
-"_Static_assert"                        { return STATIC_ASSERT; }
-"_Thread_local"                         { return THREAD_LOCAL; }
-"__func__"                              { return FUNC_NAME; }
+"auto"					{beamer_print(0);return(AUTO);  }
+"break"					{beamer_print(0);return(BREAK); }
+"case"					{beamer_print(0);return(CASE); }
+"char"					{beamer_print(0);return(CHAR); }
+"const"					{beamer_print(0);return(CONST); }
+"continue"				{beamer_print(0);return(CONTINUE); }
+"default"				{beamer_print(0);return(DEFAULT); }
+"do"					{beamer_print(0);return(DO); }
+"double"				{beamer_print(0);return(DOUBLE); }
+"else"					{beamer_print(0);return(ELSE); }
+"enum"					{beamer_print(0);return(ENUM); }
+"extern"				{beamer_print(0);return(EXTERN); }
+"float"					{beamer_print(0);return(FLOAT); }
+"for"					{beamer_print(0);return(FOR); }
+"goto"					{beamer_print(0);return(GOTO); }
+"if"					{beamer_print(0);return(IF); }
+"inline"				{beamer_print(0);return(INLINE); }
+"int"					{beamer_print(0);return(INT); }
+"long"					{beamer_print(0);return(LONG); }
+"register"				{beamer_print(0);return(REGISTER); }
+"restrict"				{beamer_print(0);return(RESTRICT); }
+"return"				{beamer_print(0);return(RETURN); }
+"short"					{beamer_print(0);return(SHORT); }
+"signed"				{beamer_print(0);return(SIGNED); }
+"sizeof"				{beamer_print(0);return(SIZEOF); }
+"static"				{beamer_print(0);return(STATIC); }
+"struct"				{beamer_print(0);return(STRUCT); }
+"switch"				{beamer_print(0);return(SWITCH); }
+"typedef"				{beamer_print(0);return(TYPEDEF); }
+"union"					{beamer_print(0);return(UNION); }
+"unsigned"				{beamer_print(0);return(UNSIGNED); }
+"void"					{beamer_print(0);return(VOID); }
+"volatile"				{beamer_print(0);return(VOLATILE); }
+"while"					{beamer_print(0);return(WHILE); }
 
-{L}{A}*					{ return check_type(); }
+{L}{A}*					{beamer_print(0);return check_type(); }
 
-{HP}{H}+{IS}?				{ return I_CONSTANT; }
-{NZ}{D}*{IS}?				{ return I_CONSTANT; }
-"0"{O}*{IS}?				{ return I_CONSTANT; }
-{CP}?"'"([^'\\\n]|{ES})+"'"		{ return I_CONSTANT; }
+{HP}{H}+{IS}?				{beamer_print(0);return I_CONSTANT; }
+{NZ}{D}*{IS}?				{beamer_print(0);return I_CONSTANT; }
+"0"{O}*{IS}?				{beamer_print(0);return I_CONSTANT; }
+{CP}?"'"([^'\\\n]|{ES})+"'"		{beamer_print(0);return I_CONSTANT; }
 
-{D}+{E}{FS}?				{ return F_CONSTANT; }
-{D}*"."{D}+{E}?{FS}?			{ return F_CONSTANT; }
-{D}+"."{E}?{FS}?			{ return F_CONSTANT; }
-{HP}{H}+{P}{FS}?			{ return F_CONSTANT; }
-{HP}{H}*"."{H}+{P}{FS}?			{ return F_CONSTANT; }
-{HP}{H}+"."{P}{FS}?			{ return F_CONSTANT; }
+{D}+{E}{FS}?				{beamer_print(0);return F_CONSTANT; }
+{D}*"."{D}+{E}?{FS}?			{beamer_print(0);return F_CONSTANT; }
+{D}+"."{E}?{FS}?			{beamer_print(0);return F_CONSTANT; }
+{HP}{H}+{P}{FS}?			{beamer_print(0);return F_CONSTANT; }
+{HP}{H}*"."{H}+{P}{FS}?			{beamer_print(0);return F_CONSTANT; }
+{HP}{H}+"."{P}{FS}?			{beamer_print(0);return F_CONSTANT; }
 
-({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+	{ return STRING_LITERAL; }
+({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+	{beamer_print(0);return STRING_LITERAL; }
 
-"..."					{ return ELLIPSIS; }
-">>="					{ return RIGHT_ASSIGN; }
-"<<="					{ return LEFT_ASSIGN; }
-"+="					{ return ADD_ASSIGN; }
-"-="					{ return SUB_ASSIGN; }
-"*="					{ return MUL_ASSIGN; }
-"/="					{ return DIV_ASSIGN; }
-"%="					{ return MOD_ASSIGN; }
-"&="					{ return AND_ASSIGN; }
-"^="					{ return XOR_ASSIGN; }
-"|="					{ return OR_ASSIGN; }
-">>"					{ return RIGHT_OP; }
-"<<"					{ return LEFT_OP; }
-"++"					{ return INC_OP; }
-"--"					{ return DEC_OP; }
-"->"					{ return PTR_OP; }
-"&&"					{ return AND_OP; }
-"||"					{ return OR_OP; }
-"<="					{ return LE_OP; }
-">="					{ return GE_OP; }
-"=="					{ return EQ_OP; }
-"!="					{ return NE_OP; }
-";"					{ return ';'; }
-("{"|"<%")				{ return '{'; }
-("}"|"%>")				{ return '}'; }
-","					{ return ','; }
-":"					{ return ':'; }
-"="					{ return '='; }
-"("					{ return '('; }
-")"					{ return ')'; }
-("["|"<:")				{ return '['; }
-("]"|":>")				{ return ']'; }
-"."					{ return '.'; }
-"&"					{ return '&'; }
-"!"					{ return '!'; }
-"~"					{ return '~'; }
-"-"					{ return '-'; }
-"+"					{ return '+'; }
-"*"					{ return '*'; }
-"/"					{ return '/'; }
-"%"					{ return '%'; }
-"<"					{ return '<'; }
-">"					{ return '>'; }
-"^"					{ return '^'; }
-"|"					{ return '|'; }
-"?"					{ return '?'; }
+"..."					{beamer_print(0);return ELLIPSIS; }
+">>="					{beamer_print(0);return RIGHT_ASSIGN; }
+"<<="					{beamer_print(0);return LEFT_ASSIGN; }
+"+="					{beamer_print(0);return ADD_ASSIGN; }
+"-="					{beamer_print(0);return SUB_ASSIGN; }
+"*="					{beamer_print(0);return MUL_ASSIGN; }
+"/="					{beamer_print(0);return DIV_ASSIGN; }
+"%="					{beamer_print(0);return MOD_ASSIGN; }
+"&="					{beamer_print(0);return AND_ASSIGN; }
+"^="					{beamer_print(0);return XOR_ASSIGN; }
+"|="					{beamer_print(0);return OR_ASSIGN; }
+">>"					{beamer_print(0);return RIGHT_OP; }
+"<<"					{beamer_print(0);return LEFT_OP; }
+"++"					{beamer_print(0);return INC_OP; }
+"--"					{beamer_print(0);return DEC_OP; }
+"->"					{beamer_print(0);return PTR_OP; }
+"&&"					{beamer_print(0);return AND_OP; }
+"||"					{beamer_print(0);return OR_OP; }
+"<="					{beamer_print(0);return LE_OP; }
+">="					{beamer_print(0);return GE_OP; }
+"=="					{beamer_print(0);return EQ_OP; }
+"!="					{beamer_print(0);return NE_OP; }
+";"					{beamer_print(0);return ';'; }
+("{"|"<%")				{beamer_print(0);return '{'; }
+("}"|"%>")				{beamer_print(0);return '}'; }
+","					{beamer_print(0);return ','; }
+":"					{beamer_print(0);return ':'; }
+"="					{beamer_print(0);return '='; }
+"("					{beamer_print(0);return '('; }
+")"					{beamer_print(0);return ')'; }
+("["|"<:")				{beamer_print(0);return '['; }
+("]"|":>")				{beamer_print(0);return ']'; }
+"."					{beamer_print(0);return '.'; }
+"&"					{beamer_print(0);return '&'; }
+"!"					{beamer_print(0);return '!'; }
+"~"					{beamer_print(0);return '~'; }
+"-"					{beamer_print(0);return '-'; }
+"+"					{beamer_print(0);return '+'; }
+"*"					{beamer_print(0);return '*'; }
+"/"					{beamer_print(0);return '/'; }
+"%"					{beamer_print(0);return '%'; }
+"<"					{beamer_print(0);return '<'; }
+">"					{beamer_print(0);return '>'; }
+"^"					{beamer_print(0);return '^'; }
+"|"					{beamer_print(0);return '|'; }
+"?"					{beamer_print(0);return '?'; }
 
 {WS}+					{ /* whitespace separates tokens */ }
 .					{ /* discard bad characters */ }
@@ -198,6 +186,10 @@ static void comment(void)
     yyerror("unterminated comment");
 }
 
+extern void beamer_print(int x);
+extern int beamer;
+extern FILE * tmp;
+
 static int check_type(void)
 {
     switch (sym_type(yytext))
@@ -212,12 +204,18 @@ static int check_type(void)
 }
 
 int  main(int  num_args , char** args) {
-    if(num_args  != 2) {printf("usage: ./ parser1  filename\n"); exit (0);}
+    if(num_args  != 3) {printf("usage: ./ parser1  filename\n"); exit (0);}
         FILE* file = fopen(args[1],"r");
+        if (strcmp(args[2],"-B")){
+            tmp = fopen("errores.txt","w+");
+            beamer=1;
+        }
     if(file == NULL) {printf("couldn 't open %s\n", args [1]);  exit (0);}
         yyin = file;   // now  flex  reads  from  file
         yyparse();
         fclose(file);
+
+        
 }
 
 

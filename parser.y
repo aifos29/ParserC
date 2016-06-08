@@ -15,6 +15,9 @@
 
  	void yyerror(const char *s);
  	void lyyerror(YYLTYPE t, char *s);
+ 	int beamer=0;
+ 	void beamer_print(int error);
+ 	FILE * tmp;
 %}
 %locations
 %token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
@@ -38,7 +41,7 @@
 
 %%
 primary_expression
-	: IDENTIFIER 
+	: IDENTIFIER  
 	| constant 
 	| string 
 	| '(' expression ')' 
@@ -240,7 +243,7 @@ declaration
 	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';'
 	| static_assert_declaration
-	|error {lyyerror(@1,"Falta ; al finalizar expresión");}
+	|error {lyyerror(@1,"Falta ; al finalizar declaracion");}
 	;
 
 declaration_specifiers
@@ -303,7 +306,7 @@ struct_or_union_specifier
 	: struct_or_union '{' struct_declaration_list '}'
 	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'
 	| struct_or_union IDENTIFIER
-	|error {lyyerror(@1," Las llaves no han sido cerradas correctamente ");yyerror;}
+	|error {lyyerror(@1," Las llaves o parentesis no han sido cerradas correctamente ");yyerror;}
 	;
 
 struct_or_union
@@ -392,12 +395,12 @@ alignment_specifier
 declarator
 	: pointer direct_declarator
 	| direct_declarator
-	|error {lyyerror(@1,"Error en la declaración");yyerror;}
+	|error {lyyerror(@1,"Falta ; al terminar expresión");yyerror;}
 	;
 
 direct_declarator
 	: IDENTIFIER
-	| '(' declarator ')'
+	| '(' declarator ')' {beamer_print(0);}
 	| direct_declarator '[' ']'
 	| direct_declarator '[' '*' ']'
 	| direct_declarator '[' STATIC type_qualifier_list assignment_expression ']'
@@ -618,15 +621,40 @@ declaration_list
 	
 	;
 
+
+
 %%
 
 
 void yyerror(const char *s)
 {
-	printf("*** %s\n", s);
+	//printf("*** %s\n", s);
 }
 
 void lyyerror(YYLTYPE t, char *s)
 {
-  printf("Line %d:c%d , %s, %s", t.first_line, t.first_column, s, yytext);
+	if (beamer==0){	
+ printf("Line %d:c%d . %s %s \n ", t.first_line, t.first_column, s, yytext);
+ }
+ else{
+ 	fprintf(tmp,"Line %d:c%d . %s %s \n ", t.first_line, t.first_column, s, yytext);
+ 	beamer_print(1);
+ }
+
+
+}
+
+void beamer_print(int error){
+	if (beamer==1){
+	if (error==1 ){
+
+
+		printf("En rojo %s",yytext);
+	}
+	else{
+		printf(" En negro %s",yytext);
+	}
+}
+
+
 }
