@@ -658,6 +658,7 @@ void startBeamer(){
 }
 
 void endBeamer(){
+	fprintf(beamerFile,"\\end{frame} \n");
   fprintf(beamerFile,"\\end{document} \n");
   fclose(beamerFile);
   system("pdflatex beamer.tex");
@@ -668,6 +669,7 @@ void endBeamer(){
 }
 
 void writeBeamer(char *_color, char *_word){
+	
   fprintf(beamerFile, "\\textcolor{%s}{ %s } \n", _color, _word);
 }
 void yyerror(const char *s)
@@ -693,7 +695,7 @@ void beamer_print(int error){
 	if (error==1 ){
 
 
-		writeBeamer("red",yytext);
+		writeBeamer("red","<-");
 	}
 	else{
 		writeBeamer("black",yytext);
