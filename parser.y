@@ -18,6 +18,7 @@
  	int beamer=0;
  	void beamer_print(int error);
  	FILE * tmp;
+ 	FILE * beamerFile;
 %}
 %locations
 %token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
@@ -626,6 +627,49 @@ declaration_list
 %%
 
 
+void startBeamer(){
+	beamerFile = fopen( "beamer.tex", "w+" );
+	fprintf(beamerFile,"\\documentclass{beamer} \n");
+	fprintf(beamerFile, "\\usetheme{Dresden} \n" );
+	fprintf(beamerFile, "\\usecolortheme{beaver} \n" );
+	fprintf(beamerFile, "\\usepackage{color} \n" );
+	fprintf(beamerFile, "\\usepackage[T1]{fontenc} \n" );
+	fprintf(beamerFile, "\\usepackage[utf8]{inputenc} \n" );
+	fprintf(beamerFile, "\\let\\Tiny=\\tiny \n" );
+	fprintf(beamerFile, "\\usepackage{pgfplots}\n" );
+	fprintf(beamerFile,"\\pgfplotsset{compat=newest,compat/show suggested version=false} \n");
+	
+	fprintf(beamerFile, "\\usepackage{tikz}\n" );
+	fprintf(beamerFile, "\\usepackage{hyperref}\n" );
+	fprintf(beamerFile,"\\title{Primer Semestre - Proyecto 2 Analizador Lexico} \n");
+	fprintf(beamerFile,"\\author { \\texttt { Amanda Solano Astorga } \\texttt { Yasiell Vallejos Gómez } } \n");
+	fprintf(beamerFile,"\\date{\\today}\n");
+	fprintf(beamerFile,"\\begin{document} \n");
+	fprintf(beamerFile,"\\maketitle \n");
+	fprintf(beamerFile,"\\begin{frame}[allowframebreaks] \n");
+	fprintf(beamerFile,"\\frametitle{ Proceso de Scanning y Herramienta Flex} \n \n");
+	fprintf(beamerFile,"El proceso de parsing,es el encargado de revisar que todos los códigos cumplan con la gramatica del lenguaje.");
+	fprintf(beamerFile,"La gramatica del lenguaje, es la que dicta las reglas de como van organizados los tokens. \\newline \n");
+	fprintf(beamerFile,"\\textbf{Bison} es una herramienta que genera un parse en lenguaje C.");
+	fprintf(beamerFile,"Su funcionamiento consiste en declarar la gramatica valida en un lenguaje especifico y decirle que hacer cuando se cumpla con una regla y si no se cumple que se le informe al usuario.Bison puede ser configurado para que indique si desea que se acabe el programa al primer error encontrado o si continua a pesar de este. \n");
+	fprintf(beamerFile,"\\end{frame} \n");
+	fprintf(beamerFile,"\\begin{frame}[allowframebreaks] \n");
+	fprintf(beamerFile,"\\frametitle{Programa Fuente} \n");
+}
+
+void endBeamer(){
+  fprintf(beamerFile,"\\end{document} \n");
+  fclose(beamerFile);
+  system("pdflatex beamer.tex");
+  remove("tmp.c");
+  remove("listo.c");
+  remove("errores.txt");
+  system("evince beamer.pdf");
+}
+
+void writeBeamer(char *_color, char *_word){
+  fprintf(beamerFile, "\\textcolor{%s}{ %s } \n", _color, _word);
+}
 void yyerror(const char *s)
 {
 	//printf("*** %s\n", s);
@@ -649,10 +693,10 @@ void beamer_print(int error){
 	if (error==1 ){
 
 
-		printf("En rojo %s",yytext);
+		writeBeamer("red",yytext);
 	}
 	else{
-		printf(" En negro %s",yytext);
+		writeBeamer("black",yytext);
 	}
 }
 

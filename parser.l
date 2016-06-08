@@ -28,6 +28,11 @@
       yylloc.last_line   = curr_line;
       yylloc.last_column = curr_col-1; }
 
+      extern void EndBeamer();
+      extern void StartBeamer();
+      extern FILE * beamerFile;
+
+
 %}
 %e  1019
 %p  2807
@@ -188,7 +193,8 @@ static void comment(void)
 
 extern void beamer_print(int x);
 extern int beamer;
-extern FILE * tmp;
+extern void startBeamer();
+extern void endBeamer();
 
 static int check_type(void)
 {
@@ -204,18 +210,23 @@ static int check_type(void)
 }
 
 int  main(int  num_args , char** args) {
-    if(num_args  != 3) {printf("usage: ./ parser1  filename\n"); exit (0);}
+   
         FILE* file = fopen(args[1],"r");
-        if (strcmp(args[2],"-B")){
+        if (args[2] != NULL && strcmp(args[2],"-B")==0){
             tmp = fopen("errores.txt","w+");
+
             beamer=1;
+            startBeamer();
         }
     if(file == NULL) {printf("couldn 't open %s\n", args [1]);  exit (0);}
         yyin = file;   // now  flex  reads  from  file
         yyparse();
         fclose(file);
+        endBeamer();
 
         
 }
+
+
 
 
